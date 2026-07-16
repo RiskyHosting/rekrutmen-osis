@@ -1,0 +1,655 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Open Recruitment OSIS 2026 | SMK Ulil Albab</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================================
+           1. GLASSMORPHISM & THEME VARIABLES
+        ========================================================= */
+        :root {
+            /* Tema Gelap (Mode Utama) */
+            --bg-base: #0a1128; 
+            --gold-primary: #cfab55;
+            --gold-light: #ebd599;
+            
+            /* Setting Kaca Premium (Lebih Terasa) */
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-border-light: rgba(255, 255, 255, 0.3);
+            --glass-border-dark: rgba(255, 255, 255, 0.05);
+            --glass-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4);
+            --glass-blur: blur(16px) saturate(120%);
+            
+            /* Teks */
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #e2e8f0;
+            --gold-primary: #b58d34;
+            
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border-light: rgba(255, 255, 255, 0.9);
+            --glass-border-dark: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 15px 35px 0 rgba(30, 58, 138, 0.15);
+            
+            --text-main: #0f172a;
+            --text-muted: #334155;
+        }
+
+        /* =========================================================
+           2. RESET & BASE
+        ========================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* =========================================================
+           3. LIVE BACKGROUND ANIMATION (GAMBAR BERGERAK HALUS)
+        ========================================================= */
+        .bg-viewport {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+            overflow: hidden;
+            background-color: var(--bg-base);
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: -10%; left: -10%;
+            width: 120%; height: 120%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 0.8s ease;
+            /* Efek gambar hidup (Pan & Zoom halus) */
+            animation: panBackground 25s infinite alternate linear;
+            will-change: transform;
+        }
+
+        @keyframes panBackground {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.08) translate(-1.5%, -1.5%); }
+        }
+
+        #bg-light { opacity: 1; z-index: 1; }
+        #bg-dark { opacity: 0; z-index: 2; }
+
+        [data-theme="dark"] #bg-light { opacity: 0; }
+        [data-theme="dark"] #bg-dark { opacity: 1; }
+
+        /* Overlay gelap/terang agar teks di atas kaca tetap terbaca jelas */
+        .bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 17, 40, 0.4);
+            z-index: 3;
+            transition: var(--transition);
+        }
+
+        [data-theme="light"] .bg-overlay {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Bintang / Partikel untuk menambah kesan "Hidup" */
+        .stars {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+        }
+        
+        .star-particle {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px 1px rgba(255,255,255,0.6);
+            animation: twinkle var(--d) ease-in-out infinite alternate;
+        }
+        
+        [data-theme="light"] .star-particle { background: var(--gold-primary); box-shadow: none; opacity: 0.5; }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* =========================================================
+           4. TRUE GLASSMORPHISM UTILITIES
+        ========================================================= */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            /* Highlight putih di atas & kiri = Rahasia Kaca 3D */
+            border-top: 1px solid var(--glass-border-light);
+            border-left: 1px solid var(--glass-border-light);
+            border-right: 1px solid var(--glass-border-dark);
+            border-bottom: 1px solid var(--glass-border-dark);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Kilauan diagonal ala pantulan cahaya pada kaca */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 7s infinite;
+            pointer-events: none;
+        }
+        [data-theme="light"] .glass-panel::before {
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        /* =========================================================
+           5. NAVBAR (STICKY GLASS) - LOGO DIPERBESAR
+        ========================================================= */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            z-index: 100;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .nav-container {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Ukuran Logo Diperbesar */
+        .logo-img {
+            height: 65px; /* LOGO LEBIH BESAR SESUAI PERMINTAAN */
+            width: auto;
+            max-width: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            transition: var(--transition);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border-light);
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        .theme-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
+
+        /* =========================================================
+           6. MAIN LAYOUT & HERO
+        ========================================================= */
+        .main-content {
+            flex: 1;
+            max-width: 850px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            z-index: 10;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(207, 171, 85, 0.15);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-light);
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 15px rgba(207, 171, 85, 0.2);
+        }
+        [data-theme="light"] .badge { background: var(--gold-primary); color: #fff; }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        [data-theme="light"] .title { text-shadow: none; }
+
+        .subtitle {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        /* Sosmed Pills */
+        .social-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        [data-theme="light"] .social-link:hover { background: rgba(255,255,255,0.7); }
+
+        /* =========================================================
+           7. KRITERIA & BENEFIT (GRID LAYOUT)
+        ========================================================= */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 700px) {
+            .info-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .info-card {
+            border-radius: 28px;
+            padding: 2.2rem;
+        }
+
+        .info-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid var(--glass-border-dark);
+            padding-bottom: 1rem;
+        }
+
+        .info-title i {
+            color: var(--gold-primary);
+        }
+
+        .list-items {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .list-items li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        [data-theme="light"] .list-items li { color: var(--text-main); }
+
+        .list-items li i {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px rgba(207, 171, 85, 0.4));
+        }
+
+        /* =========================================================
+           8. CONTACT SECTION (GLASS BUTTONS)
+        ========================================================= */
+        .contact-section {
+            border-radius: 28px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .contact-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+        [data-theme="light"] .contact-desc { color: var(--text-main); }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        @media (min-width: 650px) {
+            .contact-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .wa-btn {
+            background: rgba(37, 211, 102, 0.15); /* Green glass */
+            border-top: 1px solid rgba(37, 211, 102, 0.6);
+            border-left: 1px solid rgba(37, 211, 102, 0.6);
+            border-right: 1px solid rgba(37, 211, 102, 0.2);
+            border-bottom: 1px solid rgba(37, 211, 102, 0.2);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 1.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        [data-theme="light"] .wa-btn {
+            background: rgba(37, 211, 102, 0.9);
+            color: white;
+            border: 1px solid #25D366;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.2);
+        }
+
+        .wa-btn:hover {
+            transform: translateY(-5px);
+            background: rgba(37, 211, 102, 0.3);
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3);
+        }
+        [data-theme="light"] .wa-btn:hover { background: #1fb155; }
+
+        .wa-btn i {
+            font-size: 2.2rem;
+            color: #25D366;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
+        }
+        [data-theme="light"] .wa-btn i { color: white; filter: none; }
+
+        .wa-btn span {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+           9. FOOTER
+        ========================================================= */
+        footer {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-radius: 30px 30px 0 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: auto;
+        }
+        
+        footer strong { color: var(--text-main); font-size: 1rem; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- LIVE ANIMATED BACKGROUND (GAMBAR NYATA) -->
+    <div class="bg-viewport">
+        <!-- Di sini ia akan meload gambar terang.jpg dan dark.jpg mu -->
+        <div id="bg-light" class="bg-layer" style="background-image: url('terang.jpg');"></div>
+        <div id="bg-dark" class="bg-layer" style="background-image: url('dark.jpg');"></div>
+        <div class="bg-overlay"></div>
+        
+        <!-- Bintang berkedip halus -->
+        <div class="stars" id="starsContainer"></div>
+    </div>
+
+    <!-- GLASS NAVBAR -->
+    <nav class="navbar glass-panel">
+        <div class="nav-container">
+            <div class="brand-box">
+                <!-- Memuat logo.png (Telah diperbesar) -->
+                <!-- Jika tidak ada logo.png, akan otomatis berubah ke logo huruf 'O' sbg fallback -->
+                <img src="logo.png" alt="Logo OSIS" class="logo-img" id="logoImg" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=O&background=cfab55&color=0f223d&rounded=true&bold=true';">
+                <span class="brand-text">SMK ULIL ALBAB</span>
+            </div>
+            <button class="theme-btn" id="themeToggle" aria-label="Ganti Tema">
+                <i class="fa-solid fa-sun"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- HEADER / HERO -->
+        <section class="hero-section">
+            <div class="badge">Mari Bergabung Bersama Kami</div>
+            <h1 class="title">Open Recruitment</h1>
+            <h2 class="subtitle">OSIS SMK Ulil Albab</h2>
+            
+            <div class="social-tags">
+                <a href="https://instagram.com/osis_smkulilalbab" target="_blank" class="social-link glass-panel">
+                    <i class="fa-brands fa-instagram" style="color: #e1306c;"></i> Instagram Kami
+                </a>
+                <a href="https://tiktok.com/@osis_smkulilalbab" target="_blank" class="social-link glass-panel">
+                    <i class="fa-brands fa-tiktok"></i> TikTok Kami
+                </a>
+            </div>
+        </section>
+
+        <!-- KRITERIA & BENEFIT (GRID) -->
+        <section class="info-grid">
+            
+            <!-- Card Kriteria -->
+            <div class="info-card glass-panel">
+                <h3 class="info-title"><i class="fa-solid fa-list-check"></i> Kriteria</h3>
+                <ul class="list-items">
+                    <li><i class="fa-solid fa-circle-check"></i> Memiliki minat & niat</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Mempunyai komitmen yang serius</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Mampu berkontribusi</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Bertanggung jawab</li>
+                    <li><i class="fa-solid fa-circle-check"></i> Mendapatkan izin dari orang tua</li>
+                </ul>
+            </div>
+
+            <!-- Card Benefit -->
+            <div class="info-card glass-panel">
+                <h3 class="info-title"><i class="fa-solid fa-ranking-star"></i> Benefit</h3>
+                <ul class="list-items">
+                    <li><i class="fa-solid fa-star"></i> Melatih kepemimpinan</li>
+                    <li><i class="fa-solid fa-star"></i> Meningkatkan percaya diri</li>
+                    <li><i class="fa-solid fa-star"></i> Mengembangkan public speaking</li>
+                    <li><i class="fa-solid fa-star"></i> Menambah pengalaman organisasi</li>
+                    <li><i class="fa-solid fa-star"></i> Memperluas relasi</li>
+                    <li><i class="fa-solid fa-star"></i> Melatih kerja sama</li>
+                </ul>
+            </div>
+
+        </section>
+
+        <!-- CONTACT PERSON -->
+        <section class="contact-section glass-panel">
+            <h3 class="contact-title">Pendaftaran Dibuka</h3>
+            <p class="contact-desc">Silakan hubungi salah satu narahubung di bawah ini via WhatsApp untuk mendaftar.</p>
+            
+            <div class="contact-grid">
+                <a href="https://wa.me/6281318223883?text=Assalamualaikum%20kak,%20saya%20ingin%20bergabung%20di%20OSIS%20SMK%20ULIL%20ALBAB" target="_blank" class="wa-btn">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <div>
+                        Chat Bima<br>
+                        <span>0813-1822-3883</span>
+                    </div>
+                </a>
+                <a href="https://wa.me/628818288584?text=Assalamualaikum%20kak,%20saya%20ingin%20bergabung%20di%20OSIS%20SMK%20ULIL%20ALBAB" target="_blank" class="wa-btn">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <div>
+                        Chat Laela<br>
+                        <span>0881-8288-584</span>
+                    </div>
+                </a>
+                <a href="https://wa.me/6283195863940?text=Assalamualaikum%20kak,%20saya%20ingin%20bergabung%20di%20OSIS%20SMK%20ULIL%20ALBAB" target="_blank" class="wa-btn">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <div>
+                        Chat Bayu<br>
+                        <span>0831-9586-3940</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel">
+        <strong>OSIS SMK Ulil Albab Depok</strong><br>
+        Open Rekrutmen OSIS • Tahun Ajaran 2026/2027<br>
+        <span style="display: block; margin-top: 8px; font-size: 0.8rem; opacity: 0.7;">Generasi Muda, Pemimpin Masa Depan.</span>
+    </footer>
+
+    <!-- JAVASCRIPT SISTEM -->
+    <script>
+        /* 1. SISTEM TEMA GELAP / TERANG */
+        const themeBtn = document.getElementById('themeToggle');
+        const themeIcon = themeBtn.querySelector('i');
+        const body = document.body;
+
+        themeBtn.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            }
+        });
+
+        /* 2. FALLBACK GAMBAR BACKGROUND JIKA FILE TIDAK DITEMUKAN DI FOLDER */
+        const bgLight = document.getElementById('bg-light');
+        const bgDark = document.getElementById('bg-dark');
+        
+        const imgLight = new Image();
+        imgLight.onerror = () => { bgLight.style.backgroundImage = "url('https://files.catbox.moe/6p9wt6.jpeg')"; };
+        imgLight.src = 'terang.jpg';
+
+        const imgDark = new Image();
+        imgDark.onerror = () => { bgDark.style.backgroundImage = "url('https://files.catbox.moe/54w0ao.png')"; };
+        imgDark.src = 'dark.jpg';
+
+        /* 3. GENERATOR PARTIKEL BINTANG UNTUK BACKGROUND HIDUP */
+        const starsContainer = document.getElementById('starsContainer');
+        function createStars(count) {
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-particle';
+                
+                // Posisi random
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Ukuran random (1px - 3px)
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Durasi animasi random (2s - 5s)
+                star.style.setProperty('--d', `${Math.random() * 3 + 2}s`);
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Buat 35 partikel bintang saat web dimuat
+        createStars(35);
+    </script>
+</body>
+</html>
